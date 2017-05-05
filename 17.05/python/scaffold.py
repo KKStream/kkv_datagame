@@ -5,15 +5,12 @@
 
 
 # Built-in modules
-import codecs
-import csv
 import json
-import sys
-import numpy as np
 import pickle
-
+import sys
 
 # Additional modules
+import numpy as np
 
 # Local modules
 
@@ -24,10 +21,6 @@ def load_csv(filename):
     
     :rtype: [header, lines] where lines is an interator
     """
-    # with codecs.open(filename, 'r', encoding='utf-8') as fin:
-    #     csvreader = csv.reader(fin)
-    #     header = next(csvreader)
-    # return header, csvreader
     content = np.genfromtxt(filename, dtype=None, delimiter=',', names=True)
     header = content.dtype.names
     print("loading..."+filename+" finshed")
