@@ -8,9 +8,7 @@
 import codecs
 import csv
 import json
-import sys
 import numpy as np
-import pickle
 
 
 # Additional modules
@@ -18,10 +16,9 @@ import pickle
 # Local modules
 
 
-
 def load_csv(filename):
     """CSV loader with escape of header line.
-    
+
     :rtype: [header, lines] where lines is an interator
     """
     # with codecs.open(filename, 'r', encoding='utf-8') as fin:
@@ -31,12 +28,12 @@ def load_csv(filename):
     content = np.genfromtxt(filename, dtype=None, delimiter=',', names=True)
     header = content.dtype.names
     print("loading..."+filename+" finshed")
-    return header ,content
+    return header, content
 
 
 def load_events_train():
     """Load events_train.csv.
-    
+
     there are 4347811 rows in events_train_rows.
     the header is:
     ["time", "user_id", "title_id", "is_simulcast", "title_name", "watch_time"]
@@ -50,15 +47,15 @@ def load_events_train():
     first_row[3]: true if the show was just published at Japan or Korea.
     first_row[4]: the title name.
     first_row[5]: how much time the user spent on this title after last event.
-  
+
     :rtype: [header, lines] where lines is an interator
     """
-    return load_csv('./assets/events_train.csv')
+    return load_csv('./data/events_train.csv')
 
 
 def load_events_test():
     """Load events_test.csv.
-  
+
     There are 2940609 rows in events_test_rows.
     The format of events_train_rows and events_test_rows are the same.
     events_train contains logs of 60% selected users.
@@ -66,14 +63,15 @@ def load_events_test():
 
     :rtype: [header, lines] where lines is an interator
     """
-    return load_csv('./assets/events_test.csv')
+    return load_csv('./data/events_test.csv')
+
 
 def load_labels_train():
     """Load labels_train.csv.
 
     :rtype: [header, lines] where lines is an interator
     """
-    return load_csv('./assets/labels_train.csv')
+    return load_csv('./data/labels_train.csv')
 
 
 def load_labels_test():
@@ -81,25 +79,25 @@ def load_labels_test():
 
     :rtype: [header, lines] where lines is an interator
     """
-    return load_csv('./assets/sample.csv')
+    return load_csv('./data/sample.csv')
 
 
 def load_titles():
     """Load titles.json, title's metadata.
-    
+
     :rtype: a dictionary of titles with title_id as keys
     """
-    with codecs.open('/assets/titles.json', 'r', encoding='utf-8') as fin:
+    with codecs.open('/data/titles.json', 'r', encoding='utf-8') as fin:
         titles = json.loads(fin.read())
     return titles
 
 
 def save_result(filename, rows):
     """Save the testing's result, labels, into a file.
-    
+
     :param: as iterator with each item as (user_id, title_id)
 
-    NOTE: both user_id and title_id in rows should be a string 
+    NOTE: both user_id and title_id in rows should be a string
     with necessary padding zeros.
     """
     # with codecs.open(filename, 'w', encoding='utf-8') as fout:
@@ -107,14 +105,14 @@ def save_result(filename, rows):
     #     fout.writelines(','.join(r)+'n' for r in rows)
     with open(filename, 'w') as csvfile:
         field = ['user_id', 'title_id']
-        writer = csv.DictWriter(csvfile, fieldnames = field)
+        writer = csv.DictWriter(csvfile, fieldnames=field)
 
         writer.writeheader()
         for i in xrange(rows.shape[0]):
             writer.writerow({
-                    "user_id":str(rows[i][0]).zfill(8), 
-                    "title_id":str(rows[i][1]).zfill(8)
-                    })
+                "user_id": str(rows[i][0]).zfill(8),
+                "title_id": str(rows[i][1]).zfill(8)
+                })
 
 
 def main():
