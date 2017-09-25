@@ -1,10 +1,13 @@
 """
-if I watched tv last Monday night, I probably will watch tv this Monday night.
-
-~0.6491
+* last week
+* use ratio of consumption as features.
+* ~0.6504
 """
 import auc
 import csv
+
+
+table = [28800.0, 28800.0, 14400.0, 14400.0]
 
 
 def validate():
@@ -20,7 +23,9 @@ def validate():
         source_reader = csv.reader(csv_source_file, delimiter=',')
 
         for line in source_reader:
-            labels = [0 if x == '0' else 1 for x in line[-56:-28]]
+            labels = line[-56:-28]
+            labels = \
+                [float(v) / table[i % 4] for i, v in enumerate(labels)]
 
             labels_guess.extend(labels)
 
@@ -62,7 +67,9 @@ def test():
 
             for line in source_reader:
                 userid = [line[0]]
-                labels = [0 if x == '0' else 1 for x in line[-56:-28]]
+                labels = line[-56:-28]
+                labels = \
+                    [float(v) / table[i % 4] for i, v in enumerate(labels)]
 
                 target_writer.writerow(userid + labels)
 

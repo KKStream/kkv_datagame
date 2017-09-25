@@ -1,38 +1,11 @@
 """
-if I watched tv last Monday night, I probably will watch tv this Monday night.
-
-~0.6491
+* consider last 25 weeks
+* ~0.7303
 """
-import auc
 import csv
 
 
-def validate():
-    """
-    """
-    labels_guess = []
-    labels_truth = []
-
-    path_source = './processed/consumption_train.csv'
-    path_target = './processed/labels_train.csv'
-
-    with open(path_source, 'rb') as csv_source_file:
-        source_reader = csv.reader(csv_source_file, delimiter=',')
-
-        for line in source_reader:
-            labels = [0 if x == '0' else 1 for x in line[-56:-28]]
-
-            labels_guess.extend(labels)
-
-    with open(path_target, 'rb') as csv_target_file:
-        target_reader = csv.reader(csv_target_file, delimiter=',')
-
-        next(target_reader)
-
-        for line in target_reader:
-            labels_truth.extend([int(x) for x in line[1:]])
-
-    print auc.auc(labels_guess, labels_truth)
+table = [28800.0, 28800.0, 14400.0, 14400.0]
 
 
 def test():
@@ -60,12 +33,27 @@ def test():
         with open(path_source, 'rb') as csv_source_file:
             source_reader = csv.reader(csv_source_file, delimiter=',')
 
+            total_weight = 0.0
+
             for line in source_reader:
                 userid = [line[0]]
-                labels = [0 if x == '0' else 1 for x in line[-56:-28]]
+                labels = [0.0] * 28
+
+                for i in xrange(25, 697, 28):
+                    weight = 1.0 + (i - 25) / 28.0
+
+                    total_weight += weight
+
+                    for j in xrange(28):
+                        prob = min(1.0, int(line[i + j]) / 2400.0)
+
+                        labels[j] += weight * prob
+
+                        # labels[j] += weight * int(line[i + j]) / table[j % 4]
+
+                labels = [x / total_weight for x in labels]
 
                 target_writer.writerow(userid + labels)
 
 
-validate()
-# test()
+test()
